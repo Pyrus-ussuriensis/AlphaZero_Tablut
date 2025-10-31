@@ -138,7 +138,7 @@ class Coach():
         It then pits the new neural network against the old one and accepts it
         only if it wins >= updateThreshold fraction of games.
         """
-        if self.ab_data > 0:
+        if self.ab_data > 0 or self.start > 1:
             for i in range(self.ab_data):
                 iterationTrainExamples = deque([], maxlen=self.args.maxlenOfQueue)
                 for _ in tqdm(range(self.args.numEps), desc="ab Self Play"):
