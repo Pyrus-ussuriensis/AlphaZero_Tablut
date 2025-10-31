@@ -195,7 +195,7 @@ class Coach():
             #batch = []
             #for _ in range(self.args.step):
             #    batch += random.choices(trainExamples, k=self.args.batch_size)
-            self.nnet.train(trainExamples, batch_size=self.args.batch_size, steps=self.args.step)
+            self.nnet.train(trainExamples, batch_size=self.args.batch_size, steps=self.args.step, i=i)
 
             #nmcts = MCTS(self.game, self.nnet, self.args)
             pmcts_player = MCTSPlayer(self.game, self.pnet, self.args, temp=0, noise=False)

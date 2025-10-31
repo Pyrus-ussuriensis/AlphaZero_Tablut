@@ -116,3 +116,6 @@ puct的C(s)随节点访问数增大
 
 ## add draw rules-no progress
 增加无进展判和条件，多步没有吃子后直接判和
+
+## add lr automatic adjustment
+学习率自动调整，因为资源有限，需要快速出成果，所以使用AdamW，然后训练30轮

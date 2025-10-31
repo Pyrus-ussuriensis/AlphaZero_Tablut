@@ -32,6 +32,13 @@ args = dotdict({
     "policy_rank": 64,   # 双线性from×to头的嵌入维；32在精度/显存间折中（工程建议）
 })
 
+def _round_lr_lambda(i: int) -> float:
+    r = i  # epoch从0计，轮次从1计
+    if r == 0: return 0.5
+    if 1 <= r <= 7: return 1.0
+    if 8 <= r <= 15: return 0.3
+    if 16 <= r <= 21: return 0.1
+    return 0.03  # r >= 25
 
 
 class NNetWrapper(NeuralNet):
@@ -46,16 +53,19 @@ class NNetWrapper(NeuralNet):
         small2big, big2small = build_maps(game.n)
         self.small2big, self.big2small = torch.from_numpy(small2big), torch.from_numpy(big2small)
 
-    def train(self, examples, batch_size, steps):
         decay, no_decay = [], []
         for i,p in self.nnet.named_parameters():
             (no_decay if p.ndim==1 or 'bn' in i.lower() else decay).append(p)
-        optimizer = torch.optim.AdamW(
+        self.optimizer = torch.optim.AdamW(
             [{'params': decay, 'weight_decay':1e-4},
             {'params': no_decay, 'weight_decay':0.0}],
             lr=args.lr, betas=(0.9,0.999)
         )
+        self.scheduler = torch.optim.lr_scheduler.LambdaLR(self.optimizer, lr_lambda=_round_lr_lambda)
 
+    def train(self, examples, batch_size, steps, i):
+
+        self.scheduler.step(i-1)
         #optimizer = optim.Adam(self.nnet.parameters(), lr=args.lr)
         # 推断棋盘边长 n（最后两维）
         b0 = examples[0][0]
@@ -99,7 +109,7 @@ class NNetWrapper(NeuralNet):
             v_losses.update(l_v.item(),  boards.size(0))
             t.set_postfix(Loss_pi=pi_losses, Loss_v=v_losses)
 
-            optimizer.zero_grad(); loss.backward(); optimizer.step()
+            self.optimizer.zero_grad(); loss.backward(); self.optimizer.step()
 
     def predict(self, board):
         """
