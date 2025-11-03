@@ -23,14 +23,6 @@ class dotdict(dict):
 
 
 
-def rot_xy(x, y, n, k):
-    k %= 4
-    if k == 0: return x, y
-    if k == 1: return n-1-y, x
-    if k == 2: return n-1-x, n-1-y
-    if k == 3: return y, n-1-x
-    return x, y
-
 import numpy as np
 from functools import lru_cache
 

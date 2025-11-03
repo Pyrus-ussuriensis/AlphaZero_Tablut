@@ -22,7 +22,14 @@ args = dotdict({
     'numMCTSSims': 200,    # 提升π质量#####2
     #'numMCTSSims': 128,    # 提升π质量
     #'numMCTSSims': 200,    # 提升π质量
-    'cpuct': 1.5,
+    #'cpuct': 1.5,
+    'cpuct_c_base': 19652,
+    'cpuct_c_init': 1.25,
+    ## 根注噪
+    "dirichlet_alpha_sum": 10.0,
+    'dirichlet_alpha': 0.30,
+    'noise_eps': 0.25,
+
     #'tempThreshold': 50,   # 前20手温度>0，其后=0
 
     # 评测/门控
@@ -31,6 +38,8 @@ args = dotdict({
     'evaluate': 32,       # 确认赛#####4
     #'evaluate': 2,       # 确认赛
     'updateThreshold': 0.54,
+    'updateLow': 0.52,
+    'updateHigh': 0.60,
 
     # 存档
     'checkpoint': './experiment/6/',#####5
@@ -45,15 +54,12 @@ args = dotdict({
     #'experiment': 3,
     #'experiment': 4,
 
-    # 根注噪（仅自博弈根）
-    'dirichlet_alpha': 0.30,
-    'noise_eps': 0.25,
+    # 和棋配置
     'limit': 100,
     'limit_progress': 60,
     'draw': -1e-6,
-    'cpuct_c_base': 19652,
-    'cpuct_c_init': 1.25,
 
+    # alphabeta老师数据
     'ab_data': 1,
 
 

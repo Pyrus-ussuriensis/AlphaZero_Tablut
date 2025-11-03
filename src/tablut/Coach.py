@@ -57,8 +57,6 @@ class Coach():
         """
         trainExamples = []
         board = self.game.getInitBoard()
-        threefold = ThreefoldRepetition(k=3)
-        threefold.add_and_check(self.game.BoardRepresentation(board))
         self.curPlayer = 1
         #episodeStep = 0
 
@@ -79,7 +77,7 @@ class Coach():
             #sym = self.game.getSymmetries(canonicalBoard, pi)
             #for b, p in sym: # board, pi
             #    trainExamples.append([b.astype(np.float32), self.curPlayer, p, None]) # 添加了从board到矩阵的转化，是否数据能够被网络处理
-            img2d = np.array(canonicalBoard.getImage(), dtype=np.int8)
+            img2d = np.array(canonicalBoard.getImage(), dtype=np.int16)
             trainExamples.append((img2d, self.curPlayer, np.asarray(pi, np.float32), canonicalBoard.time, canonicalBoard.size))
             #trainExamples.append([canonicalBoard.astype(np.float32), self.curPlayer, pi, None]) # 添加了从board到矩阵的转化，是否数据能够被网络处理
 
@@ -91,9 +89,6 @@ class Coach():
             # 以1为基准，然后看是否和1相等，其检测的结果就是原对象值
             r = self.game.getGameEnded(board, 1)
             # 记录状态，计数
-            cnt = threefold.add_and_check(self.game.BoardRepresentation(canonicalBoard))
-            if cnt:
-                r = self.args.draw
 
             if r != 0:
                 return [(x[0], x[2], r * (x[1]), x[3], x[4]) for x in trainExamples]
@@ -101,8 +96,6 @@ class Coach():
     def executeEpisodeab(self):
         trainExamples = []
         board = self.game.getInitBoard()
-        threefold = ThreefoldRepetition(k=3)
-        threefold.add_and_check(self.game.BoardRepresentation(board))
         self.curPlayer = 1
 
         while True:
@@ -117,13 +110,10 @@ class Coach():
             else:
                 pi = valids/(valids.sum()+1e-8)
 
-            img2d = np.array(canonicalBoard.getImage(), dtype=np.int8)
+            img2d = np.array(canonicalBoard.getImage(), dtype=np.int16)
             trainExamples.append((img2d, self.curPlayer, np.asarray(pi, np.float32), canonicalBoard.time, canonicalBoard.size))
             board, self.curPlayer = self.game.getNextState(board, self.curPlayer, np.random.choice(len(pi), p=pi))
             r = self.game.getGameEnded(board, 1)
-            cnt = threefold.add_and_check(self.game.BoardRepresentation(canonicalBoard))
-            if cnt:
-                r = self.args.draw
             if r != 0:
                 return [(x[0], x[2], r * (x[1]), x[3], x[4]) for x in trainExamples]
 

@@ -1,6 +1,7 @@
 import numpy as np
 from tablut.rules.GameVariants import Tafl
 from tablut.Args import args
+from tablut.utils.ThreefoldRepetition import ThreefoldRepetition
 
 class Board():
 
@@ -17,6 +18,8 @@ class Board():
         self._canon_flip_king = True    # 翻不翻王：True/False
         self.pieces_count = len(self.pieces)
         self.progress_count = 0
+        self.threefold = ThreefoldRepetition(k=3)
+        self.threefold.add_and_check(self.getPBR())# 初始化记录一次
 
     def __str__(self):
         img = self.getImage()
@@ -49,6 +52,8 @@ class Board():
       b._canon_flip_king=self._canon_flip_king
       b.pieces_count = self.pieces_count
       b.progress_count = self.progress_count
+      b.threefold = ThreefoldRepetition(k=self.threefold.k)
+      b.threefold.cnt = self.threefold.cnt.copy() # 要深拷贝
       return b
 
 
@@ -201,6 +206,14 @@ class Board():
         return captures
 
     # returns code for invalid mode (<0) or number of pieces captured
+    def _threefold(self):
+        flip, king = self._canon_flip, self._canon_flip_king
+        self._canon_flip = False        
+        self._canon_flip_king = True    
+        cnt = self.threefold.add_and_check(self.getPBR())
+        self._canon_flip, self._canon_flip_king = flip, king
+        return cnt
+
     def _moveByPieceNo(self,pieceno,x2,y2):
       
       legal = self._isLegalMove(pieceno,x2,y2)
@@ -218,6 +231,11 @@ class Board():
 
       self._has_progress()
       self.done = self._getWinLose()
+
+      if self.done == 0:
+          cnt = self._threefold()
+          if cnt:
+              self.done = args.draw
       
       return len(caps)
         
@@ -230,7 +248,7 @@ class Board():
             self.pieces_count = count
             self.progress_count = 0
         else:
-            self.progress_count += 1
+            self.progress_unt += 1
 
     def _getWinLose(self): # 胜负结果以白的视角给
         DRAW = args.draw

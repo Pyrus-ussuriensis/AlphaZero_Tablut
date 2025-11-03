@@ -87,4 +87,4 @@ def test_king_edge_win():
 def test_50move_rule():
     board = g.getInitBoard()
     board.time=args.limit
-    assert board._getWinLose() == -1
+    assert board._getWinLose() == args.draw

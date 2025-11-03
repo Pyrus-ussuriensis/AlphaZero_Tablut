@@ -39,9 +39,6 @@ class Arena():
         players = [self.player2, None, self.player1]
         curPlayer = 1
         board = self.game.getInitBoard()
-        threefold = ThreefoldRepetition(k=3)
-        cnt = False
-        threefold.add_and_check(self.game.BoardRepresentation(board))
         it = 0
 
         for player in players[0], players[2]:
@@ -50,7 +47,7 @@ class Arena():
 
         # 不断跑，取动作，验证合理，跑一次 显示
 
-        while self.game.getGameEnded(board, curPlayer) == 0 and not cnt:
+        while self.game.getGameEnded(board, curPlayer) == 0:
             it += 1
             if verbose:
                 assert self.display
@@ -74,7 +71,6 @@ class Arena():
                 opponent.notify(board, action)
 
             board, curPlayer = self.game.getNextState(board, curPlayer, action)
-            cnt = threefold.add_and_check(self.game.BoardRepresentation(board))
 
         for player in players[0], players[2]:
             if hasattr(player, "endGame"):
@@ -102,22 +98,17 @@ class Arena():
         oneWon = 0
         twoWon = 0
         draws = 0
-        t1, t2, t3, t4 = 0, 0, 0, 0
+        t1, t2, t3 = 0, 0, 0
         for _ in tqdm(range(num), desc="Arena.playGames (1)"):
             gameResult = self.playGame(verbose=verbose)
             if gameResult == 1:
                 oneWon += 1
-                t1+=1
             elif gameResult == -1:
                 twoWon += 1
-                t2+=1
             else:
                 draws += 1
-                t3+=1
-                if gameResult == 0:
-                    t4+=1
-        print(f"1w,2w,3e,4c {t1}, {t2}, {t3}, {t4}") # 第一个赢，第二个赢，平局，因为循环而平局
-        t1, t2, t3, t4 = 0, 0, 0, 0
+        print(f"1w,2w,3e {t1}, {t2}, {t3}") # 第一个赢，第二个赢，平局，因为循环而平局
+        t1, t2, t3 = 0, 0, 0
         
 
         self.player1, self.player2 = self.player2, self.player1
@@ -126,15 +117,10 @@ class Arena():
             gameResult = self.playGame(verbose=verbose)
             if gameResult == -1:
                 oneWon += 1
-                t1+=1
             elif gameResult == 1:
                 twoWon += 1
-                t2+=1
             else:
                 draws += 1
-                t3+=1
-                if gameResult == 0:
-                    t4+=1
-        print(f"1w,2w,3e,4c {t1}, {t2}, {t3}, {t4}")
+        print(f"1w,2w,3e {t1}, {t2}, {t3}") # 第一个赢，第二个赢，平局，因为循环而平局
 
         return oneWon, twoWon, draws

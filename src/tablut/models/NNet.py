@@ -130,7 +130,7 @@ class NNetWrapper(NeuralNet):
         start = time.time()
 
         # preparing input
-        img2d = np.array(board.getImage(), dtype=np.int8)
+        img2d = np.array(board.getImage(), dtype=np.int16)
         img = getNNImage(img2d, board.size, board.time)
 
         x = torch.from_numpy(img).unsqueeze(0)  # (1,C,H,W)

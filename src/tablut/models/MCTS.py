@@ -45,8 +45,8 @@ class MCTS():
                 valids = self.Vs[root_s].astype(np.bool_)
                 if valids.sum() > 0:
                     K = int(valids.sum())
-                    alpha0 = 10.0
-                    alpha = alpha0 / max(1, K)
+                    alpha_sum = getattr(self.args, "dirichlet_alpha_sum", 10.0)
+                    alpha = alpha_sum / max(1, K)
                     noise = np.zeros_like(self.Ps[root_s], dtype=np.float64)
                     noise[valids] = np.random.dirichlet([alpha]*K)
                     self.Ps[root_s] = (1 - self.args.noise_eps)*self.Ps[root_s] + self.args.noise_eps*noise

@@ -121,6 +121,8 @@ class TaflGame(Game):
         #print("->",str(board))
         return str(board)
 
+    from typing_extensions import deprecated
+    @deprecated("Use new_func() instead")
     def BoardRepresentation(self, board):
         return board.getPBR()
 

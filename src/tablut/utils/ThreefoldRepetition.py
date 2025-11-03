@@ -23,6 +23,6 @@ class ThreefoldRepetition:
    
     def key_of(self, state):
         b = self._to_bytes(state)
-        return int.from_bytes(hashlib.blake2b(b, digest_size=8).digest(), "little")
+        return int.from_bytes(hashlib.blake2b(b, digest_size=16).digest(), "little")
 
 

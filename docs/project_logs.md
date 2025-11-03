@@ -123,3 +123,9 @@ puct的C(s)随节点访问数增大
 
 ## modify history pop rules
 为了更好的利用alphabeta生成的数据，我们修改规则，在分数高于1500后才放弃这份数据
+
+## repair net input coding bug and three cycles draw bug, move three cycles draw judgement to the board file
+由于王座是2，乘10后转化视角王-2得到的地点值为18，所以//10会误判王座，导致网络和alphabeta得到的值异常下降。同时三次循环中输入的棋盘错误，修正后又调整直接放到棋盘逻辑中去实现，这样更优雅。
+
+## add docs
+添加了介绍项目的文档。
