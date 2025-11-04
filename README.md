@@ -66,7 +66,7 @@ https://doi.org/10.1038/nature24270
 (Access:2025-11-04)
 
 ## External Resources: Tablut Rules & Background
-[4] Cyningstan. *Tablut*. https://tafl.cyningstan.com/page/170/tablut (Access:2025-11-04)
+[4] Cyningstan. *Tablut*. http://tafl.cyningstan.com/page/170/tablut (Access:2025-11-04)
 
 [5] Mats Winther. *Tablut (Hnefatafl) – the game of the Viking sagas*.
 https://mats-winther.github.io/bg/tablut.htm (Access:2025-11-04)
