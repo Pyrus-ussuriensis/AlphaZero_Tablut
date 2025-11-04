@@ -9,7 +9,6 @@ from tablut.Args import *
 
 if __name__=="__main__":
     g = Game("Tablut")
-    #g = Game(6)
     nnet = nn(g)
 
     if args.load_model:

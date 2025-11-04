@@ -13,11 +13,6 @@ import imageio.v2 as imageio  # 用 get_writer/append_data
 CELL = 80         # 单格像素
 MARGIN = 40       # 画布边距
 PIECE_PAD = 10
-#BG = (242, 242, 242)
-#GRID = (60, 60, 60)
-#WHITE = (240, 240, 240)
-#BLACK = (30, 30, 30)
-#KING  = (220, 170, 60)
 HINT  = (120, 180, 255)
 SEL   = (0, 0, 128)
 LAST  = (255, 110, 110)
@@ -101,7 +96,7 @@ class PygameObserver:
             return
         # Pygame -> (H,W,3) uint8
         arr = pygame.surfarray.array3d(self.screen)      # (W,H,3)
-        frame = np.transpose(arr, (1, 0, 2)).copy()      # -> (H,W,3)
+        frame = np.transpose(arr, (1, 0, 2)).copy()
         self._writer.append_data(frame)
 
     # 翻转记录器状态
@@ -118,7 +113,6 @@ class PygameObserver:
         pygame.image.save(self.screen, path)
         print(f"[rec] Snapshot: {path}")
 
-    # ---- 工具 ----
     # 像素坐标转化为棋盘坐标
     def _board_to_xy(self, mx, my):
         x = (mx - MARGIN) // CELL
@@ -132,66 +126,11 @@ class PygameObserver:
         surf = self.font.render(s, True, color)
         self.screen.blit(surf, (x, y))
 
-    '''
-    def _draw_board(self, board: Board):
-        self.screen.fill(BG)
-        # 网格
-        for i in range(self.n+1):
-            sx = MARGIN + i*CELL
-            sy = MARGIN + i*CELL
-            pygame.draw.line(self.screen, GRID, (MARGIN, MARGIN+i*CELL), (MARGIN+self.n*CELL, MARGIN+i*CELL), 1)
-            pygame.draw.line(self.screen, GRID, (MARGIN+i*CELL, MARGIN), (MARGIN+i*CELL, MARGIN+self.n*CELL), 1)
-        # 王座(中心)底色
-        cx = self.n//2; cy = self.n//2
-        rx = MARGIN + cx*CELL; ry = MARGIN + (self.n-1-cy)*CELL
-        pygame.draw.rect(self.screen, THRONE, (rx+1, ry+1, CELL-2, CELL-2), 0)
-
-        img = board.getImage()  # 原始棋面
-        # 画棋子
-        for y in range(self.n):
-            for x in range(self.n):
-                v = img[y][x]
-                if v == 0 or v % 10 == 0:
-                    continue
-                p = v % 10  # 去掉地形
-                sx = MARGIN + x*CELL + PIECE_PAD
-                sy = MARGIN + (self.n-1-y)*CELL + PIECE_PAD
-                r = CELL - 2*PIECE_PAD
-                if abs(p) == 2:  # 王
-                    pygame.draw.circle(self.screen, KING, (sx+r//2, sy+r//2), r//2)
-                    pygame.draw.circle(self.screen, BLACK, (sx+r//2, sy+r//2), r//2, 2)
-                elif p > 0:      # 白子
-                    pygame.draw.circle(self.screen, WHITE, (sx+r//2, sy+r//2), r//2)
-                    pygame.draw.circle(self.screen, BLACK, (sx+r//2, sy+r//2), r//2, 2)
-                else:            # 黑子
-                    pygame.draw.circle(self.screen, BLACK, (sx+r//2, sy+r//2), r//2)
-        # 上一步高亮
-        if self.last_move:
-            x1,y1,x2,y2 = self.last_move
-            for (x,y) in [(x1,y1),(x2,y2)]:
-                rx = MARGIN + x*CELL
-                ry = MARGIN + (self.n-1-y)*CELL
-                pygame.draw.rect(self.screen, LAST, (rx+2, ry+2, CELL-4, CELL-4), 3)
-        # 合法目标高亮
-        for (x,y) in self.hints:
-            rx = MARGIN + x*CELL
-            ry = MARGIN + (self.n-1-y)*CELL
-            pygame.draw.rect(self.screen, HINT, (rx+4, ry+4, CELL-8, CELL-8), 2)
-    def _draw_board(self, board: Board):
-        self.screen.fill(BG)
-        # 1) 画网格 …
-        # 2) 画王座底色（用 board.board 或 getImage 的十位判断即可）
-        for x, y, typ in board.board:
-            if typ > 0:  # 王座/角等
-                rx = MARGIN + x*CELL
-                ry = MARGIN + (self.n-1-y)*CELL
-                pygame.draw.rect(self.screen, THRONE, (rx+1, ry+1, CELL-2, CELL-2), 0)
-    '''
     # 画棋盘，王座，棋子，特殊提示框
     def _draw_board(self, board):
         self.screen.fill(BG)
 
-        # —— 1) 画网格（先画横再画竖，线条放在所有棋子之下）——
+        # 画网格先画横再画竖，线条放在所有棋子之下
         for i in range(self.n + 1):
             y = MARGIN + i*CELL
             x = MARGIN + i*CELL
@@ -204,7 +143,7 @@ class PygameObserver:
         pygame.draw.rect(self.screen, THRONE, (rx+1, ry+1, CELL-2, CELL-2), 0)
 
 
-        # 3) 画棋子 —— 只看 board.pieces 的 typ（不会被地形干扰）
+        # 画棋子board.pieces
         for x, y, typ in board.pieces:
             if x < 0:            # 被吃掉的
                 continue
@@ -265,11 +204,10 @@ class PygameObserver:
         self._draw_text(f"Delay: {delay_ms} ms   [D/F to -/+ ]   Step mode: {'ON' if self.step_mode else 'OFF'} (SPACE)", 10, self.size-28)
         self._draw_text("[Mouse] select piece → target   [R] reset select   [Q] quit", 10, self.size-48)
 
-    # ---- 人类输入：返回 action（原始棋面坐标系）----
+    # 人类输入返回 action
     # 人类输入先初始化值，得到合法动作，监听按键和鼠标，根据按键和点击位置更新变量值
     # 更新画面，记录画面
     def get_human_action(self, board: Board):
-        """阻塞等待：点击起点->终点；或输入坐标 i,j,k,l（按 I 切换）"""
         self.sel = None
         self.hints.clear()
         typing = False
@@ -381,22 +319,8 @@ class PygameObserver:
                 if (time.time() - start) * 1000.0 >= self.delay_ms:
                     waiting = False
 
-    '''
-    def on_end(self, board: Board, result: int, it: int):
-        self._draw_board(board)
-        txt = f"Game Over. Result={result}  (Turns={it})   [Q] quit"
-        self._draw_text(txt, 10, 30, (0,120,0))
-        pygame.display.flip()
-        # 等待退出或任意键
-        while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit(); sys.exit(0)
-                elif event.type == pygame.KEYDOWN:
-                    return
-    '''
 
-# ----- 人类玩家（原始棋盘） -----
+# 人类玩家
 # 获取观察，输入棋盘会调用观察得到人类动作
 class HumanGUIPlayer:
     expects_canonical = False   # 关键：告诉 Arena 用原始棋盘调我

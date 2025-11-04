@@ -7,8 +7,7 @@ def elo_vs_ab(W,D,L, base=1500):
     s=(W+0.5*D)/N
     sp=(W+0.5*D+0.5)/(N+1)            # Haldane–Anscombe 平滑
     delta=400*math.log10(sp/(1-sp))   # 与 AB 的 Elo 差
-    # 误差 频率学，delta-method 
-    ex2 = (W + 0.25*D)/N              # E[X^2], X∈{1,0.5,0}
+    ex2 = (W + 0.25*D)/N              
     var = ex2 - s*s
     se_s = (var/N)**0.5
     se_delta = (400/math.log(10))*se_s/(sp*(1-sp))

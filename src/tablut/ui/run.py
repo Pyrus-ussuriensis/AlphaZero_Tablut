@@ -18,13 +18,11 @@ if __name__ == "__main__":
     # 选择模式：
     mode = "human-vs-ai"  # or "ai-vs-ai"
     #mode = "ai-vs-ai"  # or "ai-vs-ai"
-    checkpoint = "./store/6_best_2225_0/"
-    checkpoint1 = "./store/6_20/"
+    checkpoint = "./docs/"
     name = "best.pth.tar"
 
-    #obs = PygameObserver(game, delay_ms=300, step_mode=False)
-    obs = PygameObserver(game, delay_ms=200, step_mode=False,
-                     record=True, out_path="./store/videos/replay_alphazero_self.gif", fps=30)
+    obs = PygameObserver(game, delay_ms=300, step_mode=False)
+    #obs = PygameObserver(game, delay_ms=200, step_mode=False, record=True, out_path="./store/videos/replay_alphazero_self.gif", fps=30)
 
 
     if mode == "ai-vs-ai":
@@ -37,4 +35,4 @@ if __name__ == "__main__":
         p2 = make_ai(game, checkpoint, name="best.pth.tar")  # AI 执黑
 
     arena = Arena(p1, p2, game, on_step=obs.on_step, on_end=obs.on_end)
-    arena.playGame(verbose=False)  # 单局；也可循环多局
+    arena.playGame(verbose=False)

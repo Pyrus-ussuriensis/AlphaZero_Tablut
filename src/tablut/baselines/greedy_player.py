@@ -56,10 +56,6 @@ class GreedyTaflPlayer:
         if len(legal) == 0:
             return None
 
-        # 能走就不选 pass
-        #if len(pool) == 0:
-        #    pool = legal
-
         best, best_as = -1e18, []
         for a in legal:
             nb, _ = self.game.getNextState(canonicalBoard, cur, int(a))

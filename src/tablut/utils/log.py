@@ -28,25 +28,3 @@ def init_logging():
 
 logger, writer = init_logging()
 
-'''
-# 训练和验证时日志和Tensorboard的统一记录
-def log_info(epoch, loss, mode, place):
-    info = f"mode: {mode}\n{place}: {epoch}\nloss: {loss}\n\n"
-    #print(info)
-    logger.info(info)
-    if mode == "train":
-        writer.add_scalar(f'{place}/train/loss', loss, epoch)
-        #writer.add_scalar('train/loss', loss, epoch)
-    elif mode == "val":
-        writer.add_scalar(f'{place}/val/loss', loss, epoch)
-        #writer.add_scalar('val/loss', loss, epoch)
-    else:
-        error_info = "writer mode error!!!"
-        #print(error_info)
-        logger.error(error_info)
-    writer.flush()
-'''     
-
-
-
-

@@ -61,28 +61,6 @@ def getNNImage(scalar, S, time):
     [my_pawn, opp_pawn, my_king, opp_king, throne, (extra terrains...), side, rem_to_limit]
     约定：此函数在 **canonical 后的棋盘** 上调用（+1 为当前行动方）。
     """
-    '''
-    H, W = self.height, self.width
-    # terrain*10 + piece 的“解码”
-    scalar = np.zeros((H, W), dtype=np.int16)
-    for x, y, typ in self.board:        # 地形编码（如 1=王座；可扩展）
-        scalar[y, x] = typ * 10
-
-    flip = bool(getattr(self, "_canon_flip", False))
-    sign = -1 if flip else 1
-    flip_king = bool(getattr(self, "_canon_flip_king", True))
-
-    for x, y, typ in self.pieces:
-        if x < 0:
-            continue
-        v = typ
-        if sign == -1:
-            if v in (-1, 1):
-                v = -v
-            elif v == 2 and flip_king:
-                v = -2
-        scalar[y, x] += v
-    '''
     H, W = S, S
 
     # 用更稳健的可逆拆分：scalar = terrain*10 + piece，piece ∈ [-2..2]
@@ -90,8 +68,6 @@ def getNNImage(scalar, S, time):
     piece  = ((scalar + 2) % 10) - 2            # 先还原 piece（保留符号，范围[-2..2]）
     terrain = (scalar - piece) // 10            # 再还原 terrain（0/1/2/...）
     # 王座检测：直接用 terrain==2；现在拆分已正确，不会再被负子值“降位”
-
-
 
     my_pawn  = (piece == +1).astype(np.float32)
     opp_pawn = (piece == -1).astype(np.float32)

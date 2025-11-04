@@ -138,11 +138,8 @@ class MCTS():
             if (s, a) in self.Qsa:
                 u = pb_c * self.Ps[s][a] * math.sqrt(N_sum) / (1 + self.Nsa.get((s,a),0))
                 u = self.Qsa.get((s,a),0) + u
-                #u = self.Qsa[(s, a)] + self.args.cpuct * self.Ps[s][a] * math.sqrt(self.Ns[s]) / ( # 综合数据对于是否选这条边的评估
-                #        1 + self.Nsa[(s, a)])
             else:
                 u = pb_c * self.Ps[s][a] * math.sqrt(N_sum) / (1 + self.Nsa.get((s,a),0))
-                #u = self.args.cpuct * self.Ps[s][a] * math.sqrt(self.Ns[s] + EPS)  # Q = 0 ?
 
             if u > cur_best:
                 cur_best = u

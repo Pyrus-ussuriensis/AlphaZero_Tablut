@@ -25,7 +25,6 @@ class Board():
         img = self.getImage()
         flat = ''.join(str(r) for v in img for r in v)
         return f"{self.getPlayerToMove()}|c{self.progress_count}|t{self.time}|d{self.done}|{flat}" # 增加了终局值，避免出现同样的局面因超时结束与没有超时的影响
-        #return f"{self.getPlayerToMove()}|d{self.done}|{flat}" # 增加了终局值，避免出现同样的局面因超时结束与没有超时的影响
 
     # add [][] indexer syntax to the Board
     def __getitem__(self, index): 
@@ -89,20 +88,8 @@ class Board():
         pieceno = self._getPieceNo(x1,y1)
         legal = self._isLegalMove(pieceno,x2,y2)
         if legal>=0:
-           #print("Accepted move: ",move) 
            self._moveByPieceNo(pieceno,x2,y2)
-        #else:
-           #print("Illegal move:",move,legal)
    
-    '''
-    def getImage(self):
-        image = [[0 for col in range(self.width)] for row in range(self.height)]
-        for item in self.board:
-            image[item[1]][item[0]] = item[2]*10
-        for piece in self.pieces:
-            if piece[0] >= 0: image[piece[1]][piece[0]] = piece[2] + image[piece[1]][piece[0]]
-        return image
-    '''
 
     # TaflLogic.py
     def getImage(self):

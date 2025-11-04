@@ -58,12 +58,10 @@ class Coach():
         trainExamples = []
         board = self.game.getInitBoard()
         self.curPlayer = 1
-        #episodeStep = 0
 
         while True:
-            #episodeStep += 1
             canonicalBoard = self.game.getCanonicalForm(board, self.curPlayer)
-            temp = 1 #int(episodeStep < self.args.tempThreshold)
+            temp = 1 
 
             valids = self.game.getValidMoves(canonicalBoard, 1).astype(np.float32)
             pi = self.mcts.getActionProb(canonicalBoard, temp=temp, noise_s=True)
@@ -74,17 +72,10 @@ class Coach():
             else:
                 pi = valids/(valids.sum()+1e-8)
 
-            #sym = self.game.getSymmetries(canonicalBoard, pi)
-            #for b, p in sym: # board, pi
-            #    trainExamples.append([b.astype(np.float32), self.curPlayer, p, None]) # 添加了从board到矩阵的转化，是否数据能够被网络处理
             img2d = np.array(canonicalBoard.getImage(), dtype=np.int16)
             trainExamples.append((img2d, self.curPlayer, np.asarray(pi, np.float32), canonicalBoard.time, canonicalBoard.size))
-            #trainExamples.append([canonicalBoard.astype(np.float32), self.curPlayer, pi, None]) # 添加了从board到矩阵的转化，是否数据能够被网络处理
-
 
             board, self.curPlayer = self.game.getNextState(board, self.curPlayer, np.random.choice(len(pi), p=pi))
-            #action = np.random.choice(len(pi), p=pi)
-            #board, self.curPlayer = self.game.getNextState(board, self.curPlayer, action)
 
             # 以1为基准，然后看是否和1相等，其检测的结果就是原对象值
             r = self.game.getGameEnded(board, 1)
@@ -168,40 +159,22 @@ class Coach():
             # NB! the examples were collected using the model from the previous iteration, so (i-1)  
             self.saveTrainExamples(i - 1)
 
-            # shuffle examples before training
-            #k_per_iter = max(1, self.args.train_size // max(1, len(self.trainExamplesHistory)))    # 每轮配额
 
             trainExamples = []
             for e in self.trainExamplesHistory:
                 trainExamples.extend(e)
-            #    e = list(e)
-            #    if len(e) <= k_per_iter:
-            #        trainExamples.extend(e)
-            #    else:
-            #        trainExamples.extend(random.sample(e, k_per_iter))
-            #shuffle(trainExamples)
-
-            #N = max(1, len(trainExamples))
-            #epochs = max(2, math.ceil(self.args.step* self.args.batch_size/ N))
 
             # training new network, keeping a copy of the old one
             self.nnet.save_checkpoint(folder=self.args.checkpoint, filename='temp.pth.tar')
             self.pnet.load_checkpoint(folder=self.args.checkpoint, filename='temp.pth.tar')
-            #pmcts = MCTS(self.game, self.pnet, self.args)
-
-            #batch = []
-            #for _ in range(self.args.step):
-            #    batch += random.choices(trainExamples, k=self.args.batch_size)
+            
             self.nnet.train(trainExamples, batch_size=self.args.batch_size, steps=self.args.step, i=i)
 
-            #nmcts = MCTS(self.game, self.nnet, self.args)
             pmcts_player = MCTSPlayer(self.game, self.pnet, self.args, temp=0, noise=False)
             nmcts_player = MCTSPlayer(self.game, self.nnet, self.args, temp=0, noise=False)
 
             logger.info('PITTING AGAINST PREVIOUS VERSION')
             arena = Arena(pmcts_player, nmcts_player, self.game)
-            #arena = Arena(lambda x: np.argmax(pmcts.getActionProb(x, temp=0)),
-            #              lambda x: np.argmax(nmcts.getActionProb(x, temp=0)), self.game)
             pwins, nwins, draws = arena.playGames(self.args.arenaCompare)
 
             logger.info('NEW/PREV WINS : %d / %d ; DRAWS : %d' % (nwins, pwins, draws))
@@ -235,8 +208,6 @@ class Coach():
         f.closed
 
     def loadTrainExamples(self):
-        #modelFile = os.path.join(self.args.load_folder_file[0], self.args.load_folder_file[1])
-        #examplesFile = modelFile + ".examples"
         folder = self.args.checkpoint
         if self.meta == None:
             self.load_iteration_checkpoints()
@@ -269,7 +240,6 @@ class Coach():
         meta = torch.load(os.path.join(self.args.checkpoint, "resume.pt"), map_location="cpu")
         self.start = meta["i"] + 1
         self.Elo = meta.get("Elo", 0)
-        #self.Elo = meta["Elo"]
         self.meta = meta
         return meta
 

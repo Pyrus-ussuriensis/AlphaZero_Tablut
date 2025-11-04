@@ -33,10 +33,10 @@ class RandomSymDataset(Dataset):
             img = np.rot90(B, k, axes=(-2, -1))
             if flip: img = np.flip(img, axis=-1)
 
-        # 关键：消除负 stride + 保证 dtype
+        # 消除负stride保证dtype
         img = np.ascontiguousarray(img, dtype=np.float32)  # 或 img = img.copy().astype(np.float32, copy=False)
 
-        # π 用置换表重排；再做连续化
+        # 置换表重排连续化
         pi_new = np.ascontiguousarray(pi[self.perms[s]], dtype=np.float32)
 
         img = getNNImage(img, size, time)

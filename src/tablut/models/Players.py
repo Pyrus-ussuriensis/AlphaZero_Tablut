@@ -12,8 +12,8 @@ class MCTSPlayer:
         probs = self.mcts.getActionProb(board, temp=self.temp, noise_s=self.noise)
         return int(np.argmax(probs))
 
-    def startGame(self):   # Arena 每局都会调用
+    def startGame(self): 
         self.mcts = MCTS(self.game, self.nnet, self.args)
 
-    def endGame(self):     # 可选
+    def endGame(self):  
         pass

@@ -30,40 +30,20 @@ from tablut.baselines.alphabeta_player import AlphaBetaTaflPlayer
 from tablut.baselines.greedy_player import GreedyTaflPlayer
 from tablut.baselines.random_player import RandomPlayer
 
-# nnet players
-#n1 = NNet(g)
-#n1.load_checkpoint('./pretrained_models/tafl/keras/','6x100x25_best.pth.tar')
-#args1 = dotdict({'numMCTSSims': 50, 'cpuct':1.0})
-#mcts1 = MCTS(g, n1, args1)
-#n1p = lambda x: np.argmax(mcts1.getActionProb(x, temp=0))
 a, b, c = AlphaBetaTaflPlayer(g,2), GreedyTaflPlayer(g), RandomPlayer(g)
 
-#arena = Arena.Arena(a, b, g, display=display)
-
-#print(arena.playGames(2, verbose=True))
 nnet = nn(g)
 pnet = nn(g)
-checkpoint = "./store/6_best_2225_0"
-checkpoint1 = "./store/6_best_2225_1"
-nnet.load_checkpoint(checkpoint1, args.load_folder_file)
+checkpoint = "./docs/"
+nnet.load_checkpoint(checkpoint, args.load_folder_file)
 pnet.load_checkpoint(checkpoint, args.load_folder_file)
 pmcts_player = MCTSPlayer(g, pnet, args, temp=0)
 nmcts_player = MCTSPlayer(g, nnet, args, temp=0)
 
-n = 100
-def test_model(a, b, c, g, n): # 让a和b,c在g上处理n次
-    arena = Arena.Arena(a, b, g)
-    print(arena.playGames(n, verbose=False))
-    arena = Arena.Arena(a, c, g)
-    print(arena.playGames(n, verbose=False))
-    arena = Arena.Arena(b, c, g)
-    print(arena.playGames(n, verbose=False))
 #arena = Arena.Arena(pmcts_player, nmcts_player, g)
 #print(arena.playGames(64, verbose=False))
 
-#test_model(nmcts_player,pmcts_player,c,g,n)
-from tablut.baselines.Elo_Cal import Evaluate_Model_with_Alpha_Beta
-print(Evaluate_Model_with_Alpha_Beta(new_model=nmcts_player, g=g, n=32, d=3))
+print(Evaluate_Model_with_Alpha_Beta(new_model=nmcts_player, g=g, n=2, d=2))
 #print(Evaluate_Model_with_Alpha_Beta(new_model=a, g=g))
 #print(Evaluate_Model_with_Alpha_Beta(new_model=b, g=g))
 #print(Evaluate_Model_with_Alpha_Beta(new_model=c, g=g))

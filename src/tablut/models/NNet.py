@@ -32,17 +32,6 @@ args = dotdict({
     "policy_rank": 64,   # 双线性from×to头的嵌入维；32在精度/显存间折中（工程建议）
 })
 
-'''
-def _round_lr_lambda(i: int) -> float:
-    r = i  # i 为 0-based 轮次索引（第1轮传入0）
-    if r == 0:              return 0.5   # 预热 1 轮
-    if 1 <= r <= 9:         return 1.0   # 1–9：高LR（共9轮）
-    if 10 <= r <= 19:       return 0.6   # 10–19：中高LR（共10轮）
-    if 20 <= r <= 29:       return 0.3   # 20–29：中LR（共10轮）
-    if 30 <= r <= 39:       return 0.1   # 30–39：低LR（共10轮）
-    if 40 <= r <= 47:       return 0.05  # 40–47：更低LR（共8轮）
-    return 0.03                         # 48–49：尾声微收敛
-'''
 
 def _round_lr_lambda(i: int) -> float:
     r = i # epoch从0计，轮次从1计
@@ -77,10 +66,8 @@ class NNetWrapper(NeuralNet):
     def train(self, examples, batch_size, steps, i):
 
         self.scheduler.step(i-1)
-        #optimizer = optim.Adam(self.nnet.parameters(), lr=args.lr)
         # 推断棋盘边长 n（最后两维）
         b0 = examples[0][0]
-        #B0 = b0[0][0].astype(np.float32) if hasattr(b0, "astype") else np.array(b0, np.float32)
         B0 = np.asarray(b0, np.float32)
         n = B0.shape[-1]
         perms = action_perms(n)
@@ -91,11 +78,6 @@ class NNetWrapper(NeuralNet):
         sampler = RandomSampler(ds, replacement=True, num_samples=total_samples)
         dl = DataLoader(ds, batch_size=batch_size, sampler=sampler,
                         drop_last=False, pin_memory=True)
-
-        #for step in range(steps):
-        #    print('STEP ::: ' + str(step+ 1))
-            #batch = random.choices(examples, k=batch_size)
-            #assert B0.shape[-2] == n, "board must be square"
 
         self.nnet.train()
         pi_losses, v_losses = AverageMeter(), AverageMeter()
@@ -137,21 +119,13 @@ class NNetWrapper(NeuralNet):
         if args.cuda:
             x = x.contiguous().cuda()
 
-        #board = torch.FloatTensor(board.astype(np.float64)) # 此处进行了格式转换从而能够输入网络。
-        #img = img.view(6, self.board_x, self.board_y)
         self.nnet.eval()
         with torch.no_grad():
             pi, v = self.nnet(x)
         
         pi = torch.exp(pi)
         p_big = expand_small_to_big_probs(pi, self.small2big, self.n)
-        #P_big = (logits_big + mask_big)  # mask_big: 非法动作为 -∞，合法 0
-        #P_big = F.log_softmax(P_big, dim=1)  # or softmax 后概率
-
-
-        # print('PREDICTION TIME TAKEN : {0:03f}'.format(time.time()-start))
         return p_big[0].cpu().numpy(), v.data.cpu().numpy()[0]
-        #return torch.exp(pi).data.cpu().numpy()[0], v.data.cpu().numpy()[0]
 
     def loss_pi(self, targets, outputs):
         return -torch.sum(targets * outputs) / targets.size()[0]
