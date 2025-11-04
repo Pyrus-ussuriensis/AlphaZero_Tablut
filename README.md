@@ -1,6 +1,6 @@
 # Solve the Bannerlord version of the Tablut with AlphaZero's method
 ## Abstract
-We train an AlphaZero agent for the Bannerlord variant of Tablut on a 9&times;9 board. 
+I train an AlphaZero agent for the Bannerlord variant of Tablut on a 9&times;9 board. 
 After 15 iterations of self-play training, the agent **wins 32/32** against a depth-2 Alpha-Beta baseline under a fixed evaluation protocol (temperature=0, no Dirichlet noise, sides alternated). 
 Code includes training/evaluation, a GUI viewer with step mode, and built-in video recording for reproducible demos.
 本项目在 9&times;9 的 Bannerlord 规则 Tablut 上实现 AlphaZero。自博弈训练 15 轮后，在固定评测协议（温度 0、无根噪、先后手交替）下，对 2 层 Alpha-Beta **32/32 全胜**。仓库包含训练/评测脚本、带单步与录像功能的 GUI 可视化，便于复现与展示。
@@ -17,8 +17,10 @@ Bannerlord中Tablut的规则是这样：
 
 这是我执白和训练的模型对弈。 
 ![Demo](docs/demo_az_h.gif)
+
 这是训练的模型执白和2层alphabeta树进行对弈。
 ![Demo](docs/demo_az_2ab.gif)
+
 这是训练模型的自博奕。
 ![Demo](docs/demo_az_self.gif)
 
