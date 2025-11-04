@@ -52,7 +52,25 @@ baselines中除了原项目提供的随机和贪心模型，我也实现了新�
 ![alt text](docs/Elo.png)
 我的训练设计总共是30轮，Elo评估是对弈32局，但是在15，16局已经能够全胜2层alphabeta树，最后也仅仅训练到20轮。Elo分数设置是32局，这里分数存在波动，同时之后存在分数的下降。我的理解是因为我使用了1轮2层alphabeta树自博奕的数据。所以开始学习的比较快，但是相应的也有副作用，比如数据有巨大的区别，而老师数据的占比是1/i，逐步下降，同时在Elo分数超过2层alphabeta后会删除老师数据，造成的结果就应该是网络的能力是受到了alphabeta先验的影响，其能力应该有一定专门的优化，污染了自博奕进化的进程，所以在老师数据比例有巨大变化，甚至删除后网络的学习会有巨大影响，甚至会遗忘学习到的知识，导致能力下降。上面我提供的权重文件是手动保存的第二个全胜2层alphabeta树的权重，它在64轮比较中能够49胜15负第一个权重，但是演示都是用第一个做的。我提供了第二个权重文件在[这里](docs/best.pth.tar)
 
-## 
+## Academic References
+[1] Silver, D., Schrittwieser, J., Simonyan, K., Antonoglou, I., et al. (2017).
+*Mastering the game of Go without human knowledge*. **Nature**, 550, 354–359.
+https://doi.org/10.1038/nature24270
+
+[2] Silver, D., Hubert, T., Schrittwieser, J., Antonoglou, I., Lai, M., Guez, A., Lanctot, M., Sifre, L., Kumaran, D., Graepel, T., Lillicrap, T., Simonyan, K., Hassabis, D. (2017).
+*Mastering Chess and Shogi by Self-Play with a General Reinforcement Learning Algorithm*.
+**arXiv:1712.01815v1**. https://arxiv.org/abs/1712.01815
+
+[3] DeepMind. (2018). *AlphaZero supplementary data (chess/shogi games & results)*.
+(archived mirror). https://schachklub.ws/wp-content/uploads/2018/12/alfazero_supplementary_data.pdf
+(Access:2025-11-04)
+
+## External Resources: Tablut Rules & Background
+[4] Cyningstan. *Tablut*. https://tafl.cyningstan.com/page/170/tablut (Access:2025-11-04)
+
+[5] Mats Winther. *Tablut (Hnefatafl) – the game of the Viking sagas*.
+https://mats-winther.github.io/bg/tablut.htm (Access:2025-11-04)
+
 ## Upstream & Acknowledgments
 本项目改造自 [Alpha Zero General](https://github.com/suragnair/alpha-zero-general)（MIT License）。该仓库提供了通用的自博弈强化学习框架（训练循环 `Coach.py`、搜索 `MCTS.py`、Othello 示例与教程）。向原作者与贡献者致谢。
 
