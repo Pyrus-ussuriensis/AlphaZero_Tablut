@@ -36,7 +36,7 @@ pip install -e .
 ### Compare
 可以在pitTafl.py中对各个模型统一进行比较。
 ### GUI play
-项目提供了通过打印棋盘可视化的基础实现，只要在Arena参数中提供显示函数，tablut.rules.TaflGame.display提供了一个，同时在playGames设置verbose为True。即可显示，这里如果要人机对弈，需要手动输入四个坐标，原x,y，目的x,y。其中视角会变化，即自己的棋子是白色的，而地方的是黑色的。
+项目提供了通过打印棋盘可视化的基础实现，只要在Arena参数中提供显示函数，tablut.rules.TaflGame.display提供了一个，同时在playGames设置verbose为True。即可显示，这里如果要人机对弈，需要手动输入四个坐标，原x,y，目的x,y。其中视角会变化，即自己的棋子是白色的，而地方的是黑色的。   
 另外在ui中实现了更成熟的可视化，可以运行ui/run.py根据调节实现不同对象的对弈或者和模型下棋。
 ### other tools
 #### checkpoints
