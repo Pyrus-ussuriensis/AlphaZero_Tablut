@@ -16,8 +16,8 @@ def make_ai(game, ckpt, name):
 if __name__ == "__main__":
     game = TaflGame("Tablut")
     # 选择模式：
-    #mode = "human-vs-ai"  # or "ai-vs-ai"
-    mode = "ai-vs-ai"  # or "ai-vs-ai"
+    mode = "human-vs-ai"  # or "ai-vs-ai"
+    #mode = "ai-vs-ai"  # or "ai-vs-ai"
     # 加载权重的路径
     checkpoint = "./docs/"
     name = "best.pth.tar"

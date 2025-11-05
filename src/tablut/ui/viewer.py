@@ -268,7 +268,7 @@ class PygameObserver:
                                 self.hints = from_map[xy]
                             else:
                                 self.sel = None
-                                self.hints.clear()
+                                self.hints = []#.clear()
 
             # 画面更新
             self._draw_board(board)
